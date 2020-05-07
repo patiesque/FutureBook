@@ -10,13 +10,11 @@ export const dislikePostEndpoint = async (req: Request, res: Response) => {
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 
-    await uc.execute({
+    const result = await uc.execute({
       userId: userInfo.userId,
       post_id: req.body.post
     });
-    res.send({
-      message: "Descurtido com sucesso"
-    });
+    res.status(200).send(result);
   } catch (err) {
     console.log(err);
     res.status(400).send({

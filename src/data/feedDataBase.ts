@@ -9,12 +9,14 @@ export class FeedDB extends BaseDB implements FeedGateway {
 
     async getFeedForUser(userId: string): Promise<FeedPost[]> {
         const response = await this.connection.raw(`
-        SELECT ${this.postTableName}.*, ${this.userTableName}.name 
-        from ${this.relationTableName}
-        JOIN ${this.postTableName} on ${this.postTableName}.userId=${this.relationTableName}.friend_id
-        JOIN ${this.userTableName} on ${this.relationTableName}.friend_id=${this.userTableName}.id
+        SELECT p.*, u.name 
+        from ${this.relationTableName} r
+        JOIN ${this.postTableName} p
+        on p.userId=r.friend_id
+        JOIN ${this.userTableName} u
+        on r.friend_id=u.id
         WHERE user_id='${userId}'
-        ORDER BY ${this.postTableName}.creationDate DESC;
+        ORDER BY p.creationDate DESC;
         `);
 
         return response[0].map((post: any) => {
@@ -32,12 +34,14 @@ export class FeedDB extends BaseDB implements FeedGateway {
 
     async getFeedType(userId: string, postType: string): Promise<FeedPost[]> {
         const response = await this.connection.raw(`
-        SELECT ${this.postTableName}.*, ${this.userTableName}.name 
-        from ${this.relationTableName}
-        JOIN ${this.postTableName} on ${this.postTableName}.userId=${this.relationTableName}.friend_id
-        JOIN ${this.userTableName} on ${this.relationTableName}.friend_id=${this.userTableName}.id
+        SELECT p.*, u.name 
+        from ${this.relationTableName} r
+        JOIN ${this.postTableName} p
+        on p.userId=r.friend_id
+        JOIN ${this.userTableName} u
+        on r.friend_id=u.id
         WHERE user_id='${userId}' 
-        AND ${this.postTableName}.postType = '${postType}'
+        AND p.postType = '${postType}'
         `);
 
         return response[0].map((post: any) => {

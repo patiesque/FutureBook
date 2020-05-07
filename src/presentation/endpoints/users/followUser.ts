@@ -10,17 +10,15 @@ export const followUserEndpoint = async (req: Request, res: Response) => {
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 
-    await uc.execute({
+    const result = await uc.execute({
       userId: userInfo.userId,
       friend_id: req.body.friend
     });
-    res.send({
-      message: "Seguido com sucesso"
-    });
+    res.status(200).send(result);
   } catch (err) {
     console.log(err);
     res.status(400).send({
       message: err.message
     });
   }
-};
+}; 

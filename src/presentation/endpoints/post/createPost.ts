@@ -16,11 +16,10 @@ export const createPostEndpoint = async (req: Request, res: Response) => {
       userId: userId.userId,
     }
 
-    await createPostUC.execute(input);
+    const result = await createPostUC.execute(input);
 
-    res.send({
-      message: "Post Criado"
-    });
+    res.status(200).send(result);
+
   } catch (err) {
     res.status(400).send({
       message: err.message,

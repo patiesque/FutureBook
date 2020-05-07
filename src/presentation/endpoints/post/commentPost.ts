@@ -10,14 +10,12 @@ export const commentPostEndpoint = async (req: Request, res: Response) => {
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 
-    await uc.execute({
+    const result = await uc.execute({
       userId: userInfo.userId,
       postId: req.body.post,
       comment: req.body.comment
     });
-    res.send({
-      message: "Comentado com sucesso"
-    });
+    res.status(200).send(result);
   } catch (err) {
     console.log(err);
     res.status(400).send({

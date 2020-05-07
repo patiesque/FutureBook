@@ -17,7 +17,7 @@ export const loginUserEndpoint = async (req: Request, res: Response) => {
       password: req.body.password
     });
 
-    res.send({ message: "Usuario logado com sucesso", token });
+    res.status(200).send("token: " + token);
   } catch (err) {
     res.status(400).send({
       message: err.message,

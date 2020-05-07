@@ -6,6 +6,7 @@ import { DuplicateUserError } from "../business/Error/DuplicateUserError";
 export class PostDB extends BaseDB implements PostGateway {
     private postTableName = "post";
     private likeTableName = "likePost";
+    private commentTableName = "commentPost";
 
     async createPost(post: Post) {
         try {
@@ -30,8 +31,7 @@ export class PostDB extends BaseDB implements PostGateway {
 
     async likePost(user_id: string, post_id: string): Promise<void> {
         await this.connection.raw(`
-       INSERT INTO ${this.likeTableName}
-       (\`user_id\`, \`post_id\`)
+       INSERT INTO ${this.likeTableName}(user_id, post_id)
        values ('${user_id}','${post_id}');
        `)
     }
@@ -46,12 +46,9 @@ export class PostDB extends BaseDB implements PostGateway {
 
     public async commentPost(id: string, userId: string, postId: string, comment: string): Promise<void> {
         await this.connection.raw(`
-            INSERT INTO commentPost 
-            (\`id\`, \`userid\`, \`postid\`, \`comment\`) 
+            INSERT INTO ${this.commentTableName} (id, userid, postid, comment) 
             values ('${id}','${userId}', '${postId}', '${comment}');
         `)
     }
-
-
 
 }

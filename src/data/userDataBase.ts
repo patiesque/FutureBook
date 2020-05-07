@@ -7,6 +7,18 @@ export class UserDB extends BaseDB implements UserGateway {
   private userTableName = "users";
   private relationTableName = "friend_user";
 
+  private mapDBUserToUser(input?: any): User | undefined {
+    return (
+      input &&
+      new User(
+        input.id,
+        input.name,
+        input.email,
+        input.password,
+      )
+    )
+  }
+  
   async createUser(user: User) {
     try {
       await this.connection
@@ -28,34 +40,33 @@ export class UserDB extends BaseDB implements UserGateway {
   }
 
   async loginUser(email: string): Promise<User | undefined> {
-    const user = await this.connection
+    const result = await this.connection
       .select("*")
       .from(this.userTableName)
       .where({ email: email });
-    if (!user[0]) {
+    if (!result[0]) {
       return undefined;
     }
-    return new User(user[0].id, user[0].name, user[0].email, user[0].password)
+    return await this.mapDBUserToUser(result[0][0])
   }
 
   async createUserFollowRelation(user_id: string, friend_id: string): Promise<void> {
     try {
-      await this.connection.raw(`INSERT INTO ${this.relationTableName}
-    (\`user_id\`, \`friend_id\`)
-    values ('${user_id}','${friend_id}');`);
+      await this.connection.raw(`
+      INSERT INTO ${this.relationTableName}(user_id, friend_id)
+      values ('${user_id}','${friend_id}');
+    `);
     } catch (err) {
       console.log(err)
       if (err.code === 'ER_DUP_ENTRY') {
-        throw new Error("Usuario ja seguido")
-      } else {
-        throw err
-      }
+        throw new Error("You already follow")
+      } 
     }
   }
 
   public async deleteFriendRelation(user_id: string, friend_id: string): Promise<void> {
     await this.connection.raw(`
-    DELETE FROM friend_user 
+    DELETE FROM ${this.relationTableName} 
     WHERE user_id = '${user_id}'
     AND friend_id = '${friend_id}'
     `)
@@ -66,17 +77,10 @@ export class UserDB extends BaseDB implements UserGateway {
       SELECT * FROM ${this.userTableName} 
       WHERE email = '${email}'
     `);
-
     if (!result[0][0]) {
       return undefined;
     }
-
-    return new User(
-      result[0][0].id,
-      result[0][0].name,
-      result[0][0].email,
-      result[0][0].password
-    );
+    return await this.mapDBUserToUser(result[0][0])
   }
 
 }
