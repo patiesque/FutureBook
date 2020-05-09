@@ -11,7 +11,13 @@ export class FollowUserUC {
 
     const userInfo = await this.authenticationGateway.getUsersInfoFromToken(input.token)
 
-    await this.usergateway.createUserFollowRelation(
+    const user = await this.usergateway.getUsersRelationsData(userInfo.userId, input.friendId)
+
+    if(user){
+      throw new Error("This user are already followed by you!")
+  }
+
+    await this.usergateway.followUserRelation(
       userInfo.userId,
       input.friendId
     );

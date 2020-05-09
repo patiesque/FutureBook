@@ -2,10 +2,11 @@ import { BaseDB } from "./baseDataBase";
 import { User } from "../business/entities/user";
 import { UserGateway } from "../business/gateways/userGateway";
 import { DuplicateUserError } from "../business/Error/DuplicateUserError";
+import { UserRelations } from "../business/entities/userRelations";
 
 export class UserDB extends BaseDB implements UserGateway {
   private userTableName = "users";
-  private relationTableName = "friend_user";
+  private friendRelationTableName = "friend_user";
 
   private mapDBUserToUser(input?: any): User | undefined {
     return (
@@ -18,7 +19,17 @@ export class UserDB extends BaseDB implements UserGateway {
       )
     )
   }
-  
+
+  private mapDBRelationToRelation(input?: any): UserRelations | undefined {
+    return (
+      input &&
+      new UserRelations(
+        input.userId,
+        input.friendId
+      )
+    )
+  }
+
   async createUser(user: User) {
     try {
       await this.connection
@@ -50,26 +61,40 @@ export class UserDB extends BaseDB implements UserGateway {
     return await this.mapDBUserToUser(result[0][0])
   }
 
-  async createUserFollowRelation(user_id: string, friend_id: string): Promise<void> {
+  async followUserRelation(userId: string, friendId: string): Promise<void> {
     try {
       await this.connection.raw(`
-      INSERT INTO ${this.relationTableName}(user_id, friend_id)
-      values ('${user_id}','${friend_id}');
+      INSERT INTO ${this.friendRelationTableName}(user_id, friend_id)
+      values ('${userId}','${friendId}');
     `);
     } catch (err) {
       console.log(err)
       if (err.code === 'ER_DUP_ENTRY') {
         throw new Error("You already follow")
-      } 
+      }
     }
   }
 
-  public async deleteFriendRelation(user_id: string, friend_id: string): Promise<void> {
+  public async unfollowedUserRelation(userId: string, friendId: string): Promise<void> {
     await this.connection.raw(`
-    DELETE FROM ${this.relationTableName} 
-    WHERE user_id = '${user_id}'
-    AND friend_id = '${friend_id}'
+    DELETE FROM ${this.friendRelationTableName} 
+    WHERE user_id = '${userId}'
+    AND friend_id = '${friendId}'
     `);
+  }
+
+  public async getUsersRelationsData(userId: string, friendId: string): Promise<UserRelations | undefined> {
+    const relation = await this.connection.raw(`
+        SELECT * 
+        FROM ${this.friendRelationTableName}
+        WHERE user_id = '${userId}' AND friend_id = '${friendId}';
+    `);
+
+    if (!relation[0][0]) {
+      return undefined;
+    };
+
+    return await this.mapDBRelationToRelation(relation[0][0]);
   }
 
   public async getUserByEmail(email: string): Promise<User | undefined> {

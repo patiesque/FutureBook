@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { UserDB } from "../../../data/userDataBase";
-import { DeleteFriendUC } from "../../../business/usecase/users/deleteFriend";
 import { JwtAuthorizer } from "../../../services/jwtAuthorizer";
+import { UnfollowedUserUC } from "../../../business/usecase/users/UnfollowedUser";
 
 export const deleteFriendEndpoint = async (req: Request, res: Response) => {
   try {
-    const uc = new DeleteFriendUC(new UserDB(), new JwtAuthorizer());
+    const uc = new UnfollowedUserUC(new UserDB(), new JwtAuthorizer());
 
     const result = await uc.execute({
       token: req.headers.authorization as string,
