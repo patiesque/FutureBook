@@ -6,7 +6,7 @@ import { PostDB } from "../../../data/postDataBase";
 export const LikePostEndpoint = async (req: Request, res: Response) => {
   try {
     const uc = new LikePostUC(new PostDB());
-    const token = req.headers.auth as string;
+    const token = req.headers.authorization as string;
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 

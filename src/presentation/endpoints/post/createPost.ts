@@ -7,12 +7,12 @@ export const createPostEndpoint = async (req: Request, res: Response) => {
   try {
     const createPostUC = new CreatePostUC(new PostDB());
     const jwtAuthorizer = new JwtAuthorizer();
-    const userId = jwtAuthorizer.getUsersInfoFromToken(req.headers.auth as string);
+    const userId = jwtAuthorizer.getUsersInfoFromToken(req.headers.authorization as string);
 
     const input = {
       image: req.body.image,
       description: req.body.description,
-      postType: req.body.postType,
+      postType: req.body.type,
       userId: userId.userId,
     }
 
@@ -27,3 +27,4 @@ export const createPostEndpoint = async (req: Request, res: Response) => {
     });
   }
 };
+ 

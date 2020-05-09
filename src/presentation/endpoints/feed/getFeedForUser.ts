@@ -6,7 +6,7 @@ import { JwtAuthorizer } from "../../../services/jwtAuthorizer";
 export const getFeedForUserEndpoint = async (req: Request, res: Response) => {
   try {
     const uc = new GetFeedForUserUC(new FeedDB());
-    const token = req.headers.auth as string;
+    const token = req.headers.authorization as string;
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 

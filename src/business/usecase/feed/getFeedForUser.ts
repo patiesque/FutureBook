@@ -4,24 +4,31 @@ import { PostType } from "../../entities/post";
 export class GetFeedForUserUC {
   constructor(private feedGateway: FeedGateway) { }
 
-  async execute(input: GetFeedInput): Promise<GetFeedOutput[]> {
-    const post = await this.feedGateway.getFeedForUser(input.userId);
+  async execute(input: GetFeedInput): Promise<FeedPostOutput> {
+    const posts = await this.feedGateway.getFeedForUser(input.userId);
 
-    return post.map(post => {
-      return {
-        id: post.getId(),
-        image: post.getImage(),
-        description: post.getDescription(),
-        creationDate: post.getCreationDate(),
-        postType: post.getPostType(),
-        userId: post.getUserId(),
-        name: post.getName()
-      };
-    });
+    return {
+      posts: posts.map(post => {
+        return {
+          id: post.getId(),
+          image: post.getImage(),
+          description: post.getDescription(),
+          creationDate: post.getCreationDate(),
+          postType: post.getPostType(),
+          userId: post.getUserId(),
+          name: post.getName()
+        };
+      })
+    }
+    
   }
 }
 
-export interface GetFeedOutput {
+export interface FeedPostOutput{
+  posts: FeedOutput[];
+}
+
+export interface FeedOutput {
   id: string;
   image: string;
   description: string;
@@ -30,6 +37,7 @@ export interface GetFeedOutput {
   userId: string;
   name: string;
 }
+
 export interface GetFeedInput {
   userId: string;
 }

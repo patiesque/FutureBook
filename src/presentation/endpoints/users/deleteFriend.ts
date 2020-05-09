@@ -6,7 +6,7 @@ import { JwtAuthorizer } from "../../../services/jwtAuthorizer";
 export const deleteFriendEndpoint = async (req: Request, res: Response) => {
   try {
     const uc = new DeleteFriendUC(new UserDB());
-    const token = req.headers.auth as string;
+    const token = req.headers.authorization as string;
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 

@@ -5,7 +5,7 @@ import { Post } from "../../entities/post";
 export class CreatePostUC {
   constructor(private postGateway: PostGateway) { }
 
-  public async execute(input: CreatePostUCInput): Promise<void> {
+  public async execute(input: CreatePostUCInput): Promise<CreatePostUCOutput>  {
 
     const id = v4();
     const post = new Post(
@@ -18,11 +18,19 @@ export class CreatePostUC {
 
     await this.postGateway.createPost(post);
 
+    return {
+      message: "Post created successfully"
+    };
+
   }
 }
 export interface CreatePostUCInput {
   image: string;
   description: string;
   postType: string,
-  userId: string
+  userId: string 
+}
+
+export interface CreatePostUCOutput {
+  message: string;
 }

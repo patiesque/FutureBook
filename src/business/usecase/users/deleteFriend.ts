@@ -2,9 +2,7 @@ import { UserGateway } from "../../gateways/userGateway";
 
 export class DeleteFriendUC {
   constructor(private usergateway: UserGateway) { }
-
   async execute(input: DeleteFriendInput): Promise<DeleteFriendOutput> {
-
 
     await this.usergateway.deleteFriendRelation(
       input.userId,
@@ -13,7 +11,7 @@ export class DeleteFriendUC {
 
     return {
       message: "Deleted user"
-    }; 
+    };
   }
 }
 

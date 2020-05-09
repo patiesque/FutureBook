@@ -6,7 +6,7 @@ import { CommentPostUC } from "../../../business/usecase/post/commentPost";
 export const commentPostEndpoint = async (req: Request, res: Response) => {
   try {
     const uc = new CommentPostUC(new PostDB());
-    const token = req.headers.auth as string;
+    const token = req.headers.authorization as string;
     const jwtAuthorizer = new JwtAuthorizer();
     const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
 
