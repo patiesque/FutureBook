@@ -9,6 +9,7 @@ export const getFeedForUserEndpoint = async (req: Request, res: Response) => {
     
     const result = await uc.execute({
       token: req.headers.authorization as string,
+      page: req.query.page
     });
 
     res.status(200).send(result);

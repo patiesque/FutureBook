@@ -9,7 +9,8 @@ export const getFeedTypeEndpoint = async (req: Request, res: Response) => {
 
     const result = await uc.execute({
       token: req.headers.authorization as string,
-      postType: req.query.postType
+      postType: req.query.postType,
+      page: req.query.page
     });
 
     res.status(200).send(result);

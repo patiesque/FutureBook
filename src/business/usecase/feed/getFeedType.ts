@@ -7,12 +7,23 @@ export class GetFeedTypeUC {
     private feedGateway: FeedGateway,
     private authenticationGateway: AuthenticationGateway
     ) { }
+    
+    private POSTS_PER_PAGE = 10;
+
 
   async execute(input: GetFeedInput): Promise<FeedPostOutput> {
 
     const userInfo = await this.authenticationGateway.getUsersInfoFromToken(input.token)
 
-    const posts = await this.feedGateway.getFeedType(userInfo.userId, input.postType);
+    if(!input.page) {
+      throw new Error("Page is not defined")
+    }
+    
+    let page = input.page >= 1 ? input.page : 1;
+
+    const offset = this.POSTS_PER_PAGE * (page - 1);
+
+    const posts = await this.feedGateway.getFeedType(userInfo.userId, input.postType, this.POSTS_PER_PAGE, offset);
 
     return {
       posts: posts.map(post => {
@@ -46,4 +57,5 @@ export interface FeedOutput {
 export interface GetFeedInput {
   token: string;
   postType: PostType;
+  page: number;
 }
