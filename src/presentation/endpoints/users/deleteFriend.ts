@@ -5,14 +5,11 @@ import { JwtAuthorizer } from "../../../services/jwtAuthorizer";
 
 export const deleteFriendEndpoint = async (req: Request, res: Response) => {
   try {
-    const uc = new DeleteFriendUC(new UserDB());
-    const token = req.headers.authorization as string;
-    const jwtAuthorizer = new JwtAuthorizer();
-    const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
+    const uc = new DeleteFriendUC(new UserDB(), new JwtAuthorizer());
 
     const result = await uc.execute({
-      userId: userInfo.userId,
-      friend_id: req.body.friend
+      token: req.headers.authorization as string,
+      friendId: req.body.friend
     });
     res.status(200).send(result);
   } catch (err) {

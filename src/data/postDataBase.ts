@@ -2,6 +2,7 @@ import { BaseDB } from "./baseDataBase";
 import { PostGateway } from "../business/gateways/postGateway";
 import { Post } from "../business/entities/post";
 import { DuplicateUserError } from "../business/Error/DuplicateUserError";
+import { PostRelations } from "../business/entities/PostRelations";
 
 export class PostDB extends BaseDB implements PostGateway {
     private postTableName = "post";
@@ -36,11 +37,11 @@ export class PostDB extends BaseDB implements PostGateway {
        `)
     }
 
-    public async dislikePost(user_id: string, post_id: string): Promise<void> {
+    public async dislikePost(userId: string, postId: string): Promise<void> {
         await this.connection.raw(`
         DELETE FROM ${this.likeTableName} 
-        WHERE user_id = '${user_id}'
-        AND post_id = '${post_id}'
+        WHERE user_id = '${userId}'
+        AND post_id = '${postId}'
         `)
     }
 
@@ -49,6 +50,30 @@ export class PostDB extends BaseDB implements PostGateway {
             INSERT INTO ${this.commentTableName} (id, userid, postid, comment) 
             values ('${id}','${userId}', '${postId}', '${comment}');
         `)
+    }
+
+    private mapDBRelationToRelation(input?: any): PostRelations | undefined{
+        return(
+            input &&
+            new PostRelations(
+                input.userId,
+                input.postId
+            )
+        )
+    }
+
+    public async getPostRelation(userId: string, postId: string): Promise<PostRelations | undefined>{
+        const relation = await this.connection.raw(`
+            SELECT *
+            FROM ${this.likeTableName}
+            WHERE user_id = '${userId}' AND post_id = '${postId}'
+        `)
+
+        if(!relation[0][0]){
+            return undefined;
+        };
+
+        return await this.mapDBRelationToRelation(relation[0][0])
     }
 
 }

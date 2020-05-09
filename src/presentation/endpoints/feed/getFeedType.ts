@@ -5,13 +5,10 @@ import { GetFeedTypeUC } from "../../../business/usecase/feed/getFeedType";
 
 export const getFeedTypeEndpoint = async (req: Request, res: Response) => {
   try {
-    const uc = new GetFeedTypeUC(new FeedDB());
-    const token = req.headers.authorization as string;
-    const jwtAuthorizer = new JwtAuthorizer();
-    const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
+    const uc = new GetFeedTypeUC(new FeedDB(), new JwtAuthorizer());
 
     const result = await uc.execute({
-      userId: userInfo.userId,
+      token: req.headers.authorization as string,
       postType: req.query.postType
     });
 

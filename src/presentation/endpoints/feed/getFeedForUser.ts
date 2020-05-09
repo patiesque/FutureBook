@@ -5,13 +5,10 @@ import { JwtAuthorizer } from "../../../services/jwtAuthorizer";
 
 export const getFeedForUserEndpoint = async (req: Request, res: Response) => {
   try {
-    const uc = new GetFeedForUserUC(new FeedDB());
-    const token = req.headers.authorization as string;
-    const jwtAuthorizer = new JwtAuthorizer();
-    const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
-
+    const uc = new GetFeedForUserUC(new FeedDB(), new JwtAuthorizer());
+    
     const result = await uc.execute({
-      userId: userInfo.userId,
+      token: req.headers.authorization as string,
     });
 
     res.status(200).send(result);
@@ -22,3 +19,4 @@ export const getFeedForUserEndpoint = async (req: Request, res: Response) => {
     });
   }
 };
+ 

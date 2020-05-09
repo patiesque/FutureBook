@@ -11,7 +11,7 @@ export class LoginUserUC {
     private cryptographyGateway: CryptographyGateway
   ) { }
 
-  public async execute(input: LoginUserUCInput) {
+  public async execute(input: LoginUserUCInput): Promise<LoginUserUCOutput>  {
     const user = await this.userGateway.getUserByEmail(input.email);
 
     if (!user) {
@@ -26,10 +26,16 @@ export class LoginUserUC {
       userId: user.getId()
     });
 
-    return token;
+    return {
+      message: "Token " + token
+    };  
   }
 }
 export interface LoginUserUCInput {
   email: string;
   password: string;
+}
+
+export interface LoginUserUCOutput {
+  message: string;
 }

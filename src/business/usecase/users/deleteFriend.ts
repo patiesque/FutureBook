@@ -1,12 +1,18 @@
 import { UserGateway } from "../../gateways/userGateway";
+import { AuthenticationGateway } from "../../gateways/authenticationGateway";
 
 export class DeleteFriendUC {
-  constructor(private usergateway: UserGateway) { }
+  constructor(
+    private usergateway: UserGateway,
+    private authenticationGateway: AuthenticationGateway
+    ) { }
   async execute(input: DeleteFriendInput): Promise<DeleteFriendOutput> {
 
+    const userInfo = await this.authenticationGateway.getUsersInfoFromToken(input.token)
+
     await this.usergateway.deleteFriendRelation(
-      input.userId,
-      input.friend_id
+      userInfo.userId,
+      input.friendId
     );
 
     return {
@@ -16,8 +22,8 @@ export class DeleteFriendUC {
 }
 
 export interface DeleteFriendInput {
-  userId: string;
-  friend_id: string;
+  token: string;
+  friendId: string;
 }
 
 export interface DeleteFriendOutput {

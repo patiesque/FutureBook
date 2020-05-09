@@ -1,11 +1,18 @@
 import { FeedGateway } from "../../gateways/feedGateway";
 import { PostType } from "../../entities/post";
+import { AuthenticationGateway } from "../../gateways/authenticationGateway";
 
 export class GetFeedForUserUC {
-  constructor(private feedGateway: FeedGateway) { }
+  constructor(
+    private feedGateway: FeedGateway,
+    private authenticationGateway: AuthenticationGateway
+    ) { }
 
   async execute(input: GetFeedInput): Promise<FeedPostOutput> {
-    const posts = await this.feedGateway.getFeedForUser(input.userId);
+
+    const userInfo = await this.authenticationGateway.getUsersInfoFromToken(input.token)
+
+    const posts = await this.feedGateway.getFeedForUser(userInfo.userId);
 
     return {
       posts: posts.map(post => {
@@ -20,7 +27,7 @@ export class GetFeedForUserUC {
         };
       })
     }
-    
+     
   }
 }
 
@@ -39,5 +46,5 @@ export interface FeedOutput {
 }
 
 export interface GetFeedInput {
-  userId: string;
+  token: string;
 }

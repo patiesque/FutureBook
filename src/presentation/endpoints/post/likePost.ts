@@ -5,14 +5,11 @@ import { PostDB } from "../../../data/postDataBase";
 
 export const LikePostEndpoint = async (req: Request, res: Response) => {
   try {
-    const uc = new LikePostUC(new PostDB());
-    const token = req.headers.authorization as string;
-    const jwtAuthorizer = new JwtAuthorizer();
-    const userInfo = jwtAuthorizer.getUsersInfoFromToken(token);
-
-    const result = await uc.execute({
-      userId: userInfo.userId,
-      post_id: req.body.post
+    const uc = new LikePostUC(new PostDB(), new JwtAuthorizer);
+ 
+    const result = await uc.execute({ 
+      token: req.headers.authorization as string,
+      postId: req.body.post
     });
     res.status(200).send(result);
   } catch (err) {
