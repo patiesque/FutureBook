@@ -24,4 +24,4 @@ export interface DeleteFriendInput {
 
 export interface DeleteFriendOutput {
   message: string;
-}
+} 

@@ -23,4 +23,4 @@ export interface FollowUserInput {
  
 export interface FollowUserOutput {
   message: string;
-}
+} 

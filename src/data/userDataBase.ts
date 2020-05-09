@@ -69,7 +69,7 @@ export class UserDB extends BaseDB implements UserGateway {
     DELETE FROM ${this.relationTableName} 
     WHERE user_id = '${user_id}'
     AND friend_id = '${friend_id}'
-    `)
+    `);
   }
 
   public async getUserByEmail(email: string): Promise<User | undefined> {

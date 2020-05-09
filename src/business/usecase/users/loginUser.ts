@@ -1,6 +1,8 @@
 import { UserGateway } from "../../gateways/userGateway";
 import { AuthenticationGateway } from "../../gateways/authenticationGateway";
 import { CryptographyGateway } from "../../gateways/cryptographyGateway";
+import { NotFound } from "../../Error/NotFound";
+import { IncorrectPasswordOrEmail } from "../../Error/IncorrectPasswordOrEmail";
 
 export class LoginUserUC {
   constructor(
@@ -13,11 +15,11 @@ export class LoginUserUC {
     const user = await this.userGateway.getUserByEmail(input.email);
 
     if (!user) {
-      throw new Error("Usuario não encontrado");
+      throw new NotFound;
     }
 
     if (!await this.cryptographyGateway.compare(input.password, user.getPassword())) {
-      throw new Error("Senha ou Email incorreto")
+      throw new IncorrectPasswordOrEmail
     }
 
     const token = this.authenticationGateway.generateToken({
