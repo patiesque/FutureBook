@@ -15,7 +15,7 @@ export class UserDB extends BaseDB implements UserGateway {
         input.id,
         input.name,
         input.email,
-        input.password,
+        input.password, 
       )
     )
   }
@@ -60,7 +60,7 @@ export class UserDB extends BaseDB implements UserGateway {
     }
     return await this.mapDBUserToUser(result[0][0])
   }
-
+ 
   async followUserRelation(userId: string, friendId: string): Promise<void> {
     try {
       await this.connection.raw(`
